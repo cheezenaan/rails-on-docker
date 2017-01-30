@@ -1,0 +1,50 @@
+version: '2'
+services:
+  datastore:
+    container_name: datastore
+    image: busybox
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - bundle_install:/myapp/vendor/bundle
+      - bundle:/myapp/.bundle
+      - node_modules:/myapp/node_modules
+
+  database:
+    container_name: mysql
+    image: mysql:5.6
+    environment:
+      MYSQL_ROOT_PASSWORD: password1234
+    ports:
+      - 3306:3306
+    volumes_from:
+      - datastore
+
+  webapp: &app_base
+    container_name: rails
+    build: 
+      context: .
+      dockerfile: "Dockerfile.dev"
+    command: bundle exec rails s -b 0.0.0.0 --pid tmp/pids/server.pid
+    environment:
+      RAILS_ENV: development
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: password1234
+      MYSQL_HOST: database 
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/myapp
+    volumes_from:
+      - datastore
+    depends_on: 
+      - database
+
+volumes:
+  mysql_data:
+    driver: local
+  bundle_install:
+    driver: local
+  bundle:
+    driver: local
+  node_modules:
+    driver: local

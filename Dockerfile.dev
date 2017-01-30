@@ -1,0 +1,53 @@
+
+FROM ruby:2.4.0
+
+RUN set -x \
+&&  apt-get update -qq \
+&&  apt-get install -y --no-install-recommends \
+    build-essential mysql-client \
+&& rm -rf /var/lib/apt/lists/*
+
+ENV ENTRYKIT_VERSION 0.4.0
+ENV DOCKERIZE_VERSION v0.3.0
+
+# Install Entrykit
+RUN curl -LO https://github.com/progrium/entrykit/releases/download/v{$ENTRYKIT_VERSION}/entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
+&&  tar zxvf entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
+&&  rm entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
+&&  mv entrykit /bin/entrykit \
+&&  entrykit --symlink \
+# Install dockerize
+&&  wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+&&  tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+&&  rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+# Install Node.js via nodebrew
+ENV NODE_VERSION 6.9.4
+ENV PATH /root/.nodebrew/current/bin:$PATH
+RUN curl -L git.io/nodebrew | perl - setup \
+&&  nodebrew install-binary $NODE_VERSION \
+&&  nodebrew use $NODE_VERSION \
+&&  npm config set unsafe-perm true
+
+# Install phantomjs to use poltergeist
+RUN npm install -g phantomjs-prebuilt
+
+# Prepare for "bundle install"
+ENV APP_ROOT /myapp
+RUN mkdir $APP_ROOT
+WORKDIR $APP_ROOT
+
+ADD Gemfile Gemfile
+ADD Gemfile.lock Gemfile.lock
+
+# Rails application template to use "rails new"
+ADD templates/Gemfiles.rb templates/Gemfiles.rb 
+ADD templates/settings.rb templates/settings.rb 
+
+RUN bundle config --local build.nokogiri --user-system-libraries
+
+ENTRYPOINT [ \
+    "prehook", "ruby -v", "--", \
+    "prehook", "bundle install -j4 --path vendor/bundle", "--", \
+    "prehook", "dockerize -timeout 60s -wait tcp://database:3306", "--" \
+]

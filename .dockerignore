@@ -1,0 +1,13 @@
+# Git
+.git
+.gitignore
+
+# Rails
+.bundle
+.rspec
+log
+tmp
+vendor
+
+# frontend
+node_modules
