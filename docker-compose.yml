@@ -33,7 +33,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - .:/myapp
+      - sync-volume:/myapp
     volumes_from:
       - datastore
     depends_on: 
@@ -48,3 +48,5 @@ volumes:
     driver: local
   node_modules:
     driver: local
+  sync-volume:
+    external: true
