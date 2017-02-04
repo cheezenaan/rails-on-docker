@@ -1,25 +1,26 @@
-# config/application.rb 
+# config/application.rb
 # refs. https://railsguides.jp/generators.html#application
-application do <<-'EOS'
+application do
+  <<-"EOS"
 config.time_zone = "Tokyo"
-config.active_record.default_timezone = :local
+    config.active_record.default_timezone = :local
 
-I18n.enforce_available_locales = true
-config.i18n.load_path += Dir[Rails.root.join("config", "locales", "**", "*.{rb,yml}").to_s]
-config.i18n.default_locale = :ja
+    I18n.enforce_available_locales = true
+    config.i18n.load_path += Dir[Rails.root.join("config", "locales", "**", "*.{rb,yml}").to_s]
+    config.i18n.default_locale = :ja
 
-config.generators do |g|
-  g.assets false
-  g.helper false
-  g.test_framekwork :rspec,
-    fixture: true,
-    view_specs: false,
-    helper_specs: false,
-    routing_specs: false,
-    controller_specs: false,
-    request_specs: false
-  g.fixture_replacement :factory_girl, dir: "spec/factories"
-end
+    config.generators do |g|
+      g.assets false
+      g.helper false
+      g.test_framekwork :rspec,
+        fixture: true,
+        view_specs: false,
+        helper_specs: false,
+        routing_specs: false,
+        controller_specs: false,
+        request_specs: false
+      g.fixture_replacement :factory_girl, dir: "spec/factories"
+    end
 EOS
 end
 
@@ -62,9 +63,10 @@ RUBY
 # refs. http://ruby-rails.hatenadiary.com/entry/20150204/1423055537#first-settings-test
 gsub_file "spec/rails_helper.rb", "config.use_transactional_fixtures = true", "config.use_transactional_fixtures = false"
 insert_into_file "spec/rails_helper.rb", <<RUBY, before: "RSpec.configure do |config|"
-  require "database_cleaner"
-insert_into_file "spec/rails_helper.rb", <<RUBY, after: "RSpec.configure do |config|"
+require "database_cleaner"
+RUBY
 
+insert_into_file "spec/rails_helper.rb", <<RUBY, after: "RSpec.configure do |config|\n"
   config.before :suite do
     DatabaseCleaner.clean_with :truncation
   end
@@ -89,40 +91,40 @@ RUBY
 # .pryrc(to use awesome_print, hirb)
 # refs. http://qiita.com/necojackarc/items/9cd4ce16323111021caa
 create_file ".pryrc", <<RUBY
-  # awesome_print
-  begin
-    require "awesome_print"
-    Pry.config.print = proc { |output, value| output.puts value.ai }
-  rescue LoadError
-    puts "Awesome Print is currently not installed yet ..."
-  end
-    
-  # hirb
-  begin
-    require "hirb"
-  rescue LoadError
-    puts "Hirb is currently not installed yet ..."
-  end
+# awesome_print
+begin
+  require "awesome_print"
+  Pry.config.print = proc { |output, value| output.puts value.ai }
+rescue LoadError
+  puts "Awesome Print is currently not installed yet ..."
+end
 
-  if defined? Hirb
-    # Slightly dirty hack to fully support in-session Hirb.disable/enable toggling
-    Hirb::View.instance_eval do
-      def enable_output_method
-        @output_method = true
-        @old_print = Pry.config.print
-        Pry.config.print = proc do |*args|
-          Hirb::View.view_or_page_output(args[1]) || @old_print.call(*args)
-        end
-      end   
-  
-      def disable_output_method
-        Pry.config.print = @old_print
-        @output_method = nil
+# hirb
+begin
+  require "hirb"
+rescue LoadError
+  puts "Hirb is currently not installed yet ..."
+end
+
+if defined? Hirb
+  # Slightly dirty hack to fully support in-session Hirb.disable/enable toggling
+  Hirb::View.instance_eval do
+    def enable_output_method
+      @output_method = true
+      @old_print = Pry.config.print
+      Pry.config.print = proc do |*args|
+        Hirb::View.view_or_page_output(args[1]) || @old_print.call(*args)
       end
     end
-    
-    Hirb.enable
+
+    def disable_output_method
+      Pry.config.print = @old_print
+      @output_method = nil
+    end
   end
+
+  Hirb.enable
+end
 RUBY
 
 # guard-rspec
@@ -146,7 +148,7 @@ run "mv app/assets/stylesheets/application.css app/assets/stylesheets/applicatio
 
 # config/database.yml
 remove_file "config/database.yml"
-create_file "config/database.yml", %q{
+create_file "config/database.yml", '
 default: &default
   adapter: mysql2
   encoding: utf8
@@ -162,7 +164,7 @@ development:
 test:
   <<: *default
   database: myapp_test
-}
+'
 
 # database migration
 rake "db:create"
