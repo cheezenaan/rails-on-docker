@@ -1,26 +1,26 @@
 # config/application.rb 
 # refs. https://railsguides.jp/generators.html#application
 application do <<-'EOS'
-  config.time_zone = "Tokyo"
-  config.active_record.default_timezone = :local
+config.time_zone = "Tokyo"
+config.active_record.default_timezone = :local
 
-  I18n.enforce_available_locales = true
-  config.i18n.load_path += Dir[Rails.root.join("config", "locales", "**", "*.{rb,yml}").to_s]
-  config.i18n.default_locale = :ja
+I18n.enforce_available_locales = true
+config.i18n.load_path += Dir[Rails.root.join("config", "locales", "**", "*.{rb,yml}").to_s]
+config.i18n.default_locale = :ja
 
-  config.generators do |g|
-    g.assets false
-    g.helper false
-    g.test_framekwork :rspec,
-      fixture: true,
-      view_specs: false,
-      helper_specs: false,
-      routing_specs: false,
-      controller_specs: false,
-      request_specs: false
-    g.fixture_replacement :factory_girl, dir: "spec/factories"
-  end
-  EOS
+config.generators do |g|
+  g.assets false
+  g.helper false
+  g.test_framekwork :rspec,
+    fixture: true,
+    view_specs: false,
+    helper_specs: false,
+    routing_specs: false,
+    controller_specs: false,
+    request_specs: false
+  g.fixture_replacement :factory_girl, dir: "spec/factories"
+end
+EOS
 end
 
 # locale files
@@ -39,29 +39,33 @@ uncomment_lines "spec/rails_helper.rb", /Dir\[Rails\.root\.join/
 
 # capybara, factory_girl
 insert_into_file "spec/spec_helper.rb", <<RUBY, before: "RSpec.configure do |config|"
-  require "capybara/rspec"
-  require "capybara-screenshot/rspec"
-  require "capybara/poltergeist"
-  require "factory_girl_rails"
+require "capybara/rspec"
+require "capybara-screenshot/rspec"
+require "capybara/poltergeist"
+require "factory_girl_rails"
+require "simplecov"
 
-  Capybara.server_host = "localhost"
-  Capybara.server_port = 3001
-  Capybara.javascript_driver = "poltergeist"
+Capybara.server_host = "localhost"
+Capybara.server_port = 3001
+Capybara.javascript_driver = "poltergeist"
 RUBY
 
 # simplecov
 insert_into_file "spec/spec_helper.rb", <<RUBY, before: "RSpec.configure do |config|"
-  SimpleCov.start "rails" do
-    add_filter "/vendor/"
-    add_filter "/spec/"
-  end
+SimpleCov.start "rails" do
+  add_filter "/vendor/"
+  add_filter "/spec/"
+end
 RUBY
 
 # database_cleaner
 # refs. http://ruby-rails.hatenadiary.com/entry/20150204/1423055537#first-settings-test
 gsub_file "spec/rails_helper.rb", "config.use_transactional_fixtures = true", "config.use_transactional_fixtures = false"
-insert_into_file "spec/spec_helper.rb", <<RUBY, after: "RSpec.configure do |config|"
-    config.before :suite do
+insert_into_file "spec/rails_helper.rb", <<RUBY, before: "RSpec.configure do |config|"
+  require "database_cleaner"
+insert_into_file "spec/rails_helper.rb", <<RUBY, after: "RSpec.configure do |config|"
+
+  config.before :suite do
     DatabaseCleaner.clean_with :truncation
   end
 
