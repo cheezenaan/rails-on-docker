@@ -131,10 +131,6 @@ RUBY
 # refs. http://ruby-rails.hatenadiary.com/entry/20141021/1413819783
 run "bundle e guard init rspec"
 
-# guard-livereload
-# Install browser extension: http://livereload.com/extensions/
-run "bundle e guard init livereload"
-
 # spring
 # refs. http://ruby-rails.hatenadiary.com/entry/20141026/1414289421
 run "bin/spring stop"

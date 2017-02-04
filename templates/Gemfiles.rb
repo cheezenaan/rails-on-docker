@@ -9,7 +9,6 @@ gem_group :development, :test do
   gem "binding_of_caller"
   gem "rails-flog", require: "flog" # Log formatter for SQL and hash
 
-  gem "guard-livereload", require: false
   gem "guard-rspec", require: false
 
   gem "awesome_print"
