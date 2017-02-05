@@ -18,7 +18,7 @@ config.time_zone = "Tokyo"
         helper_specs: false,
         routing_specs: false,
         controller_specs: false,
-        request_specs: false
+        request_specs: true
       g.fixture_replacement :factory_girl, dir: "spec/factories"
     end
 EOS
@@ -39,6 +39,10 @@ run "rm -rf test"
 uncomment_lines "spec/rails_helper.rb", /Dir\[Rails\.root\.join/
 
 # capybara, factory_girl
+insert_into_file "spec/rails_helper.rb", <<RUBY, after: "RSpec.configure do |config|\n",
+  config.include Capybara::DSL
+RUBY
+
 insert_into_file "spec/spec_helper.rb", <<RUBY, before: "RSpec.configure do |config|"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
