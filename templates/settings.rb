@@ -134,6 +134,7 @@ RUBY
 # guard-rspec
 # refs. http://ruby-rails.hatenadiary.com/entry/20141021/1413819783
 run "bundle e guard init rspec"
+gsub_file "Guardfile", "bundle exec rspec", "bin/rspec"
 
 # spring
 # refs. http://ruby-rails.hatenadiary.com/entry/20141026/1414289421
