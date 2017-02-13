@@ -1,4 +1,3 @@
-
 FROM ruby:2.4.0
 
 RUN set -x \
@@ -41,10 +40,11 @@ ADD Gemfile Gemfile
 ADD Gemfile.lock Gemfile.lock
 
 # Rails application template to use "rails new"
-ADD templates/Gemfiles.rb templates/Gemfiles.rb 
-ADD templates/settings.rb templates/settings.rb 
+ADD templates/Gemfiles.rb templates/Gemfiles.rb
+ADD templates/settings.rb templates/settings.rb
 
-RUN bundle config --local build.nokogiri --user-system-libraries 
+RUN  gem install bundler \
+&&   bundle config --local build.nokogiri --user-system-libraries
 
 ENTRYPOINT [ \
     "prehook", "ruby -v", "--", \
