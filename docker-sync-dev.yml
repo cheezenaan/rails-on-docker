@@ -3,3 +3,9 @@ syncs:
     src: .
     dest: /myapp
     sync_strategy: unison
+    sync_excludes: ['log/', 'tmp/', 'Gemfile.lock', 'Gemfile', 'config.rb', '.sass-cache/', 'sass/', 'sass-cache/', 'composer.json' , 'bower.json', 'package.json', 'Gruntfile*', 'bower_components/', 'node_modules/', '.gitignore', '.git/', '*.coffee', '*.scss', '*.sass']
+    watch_in_container: true
+    watch_excludes: ['.*/tmp', '.*/log', '.*/.git', '.*/node_modules', '.*/bower_components', '.*/sass-cache', '.*/.sass-cache', '.*/.sass-cache', '.coffee', '.scss', '.sass', '.gitignore']
+    watch_strategy: fswatch
+
+

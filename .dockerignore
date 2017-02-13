@@ -5,9 +5,9 @@
 # Rails
 .bundle
 .rspec
-log
-tmp
-vendor
+log/*
+tmp/*
+vendor/bundle
 
 # frontend
 node_modules
