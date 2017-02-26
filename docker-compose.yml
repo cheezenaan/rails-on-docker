@@ -21,7 +21,7 @@ services:
 
   webapp: &app_base
     container_name: rails
-    build: 
+    build:
       context: .
       dockerfile: "Dockerfile.dev"
     command: bundle exec rails s -b 0.0.0.0 --pid tmp/pids/server.pid
@@ -29,14 +29,14 @@ services:
       RAILS_ENV: development
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: password1234
-      MYSQL_HOST: database 
+      MYSQL_HOST: database
     ports:
       - 3000:3000
     volumes:
-      - sync-volume:/myapp
+      - .:/myapp
     volumes_from:
       - datastore
-    depends_on: 
+    depends_on:
       - database
 
 volumes:
@@ -48,5 +48,3 @@ volumes:
     driver: local
   node_modules:
     driver: local
-  sync-volume:
-    external: true
