@@ -39,11 +39,14 @@ run "rm -rf test"
 uncomment_lines "spec/rails_helper.rb", /Dir\[Rails\.root\.join/
 
 # capybara, factory_girl
-insert_into_file "spec/rails_helper.rb", <<RUBY, after: "RSpec.configure do |config|\n",
+insert_into_file "spec/rails_helper.rb", after: "RSpec.configure do |config|\n" do
+<<RUBY
   config.include Capybara::DSL
 RUBY
+end
 
-insert_into_file "spec/spec_helper.rb", <<RUBY, before: "RSpec.configure do |config|"
+insert_into_file "spec/spec_helper.rb", before: "RSpec.configure do |config|\n" do
+<<RUBY
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "capybara/poltergeist"
@@ -54,24 +57,30 @@ Capybara.server_host = "localhost"
 Capybara.server_port = 3001
 Capybara.javascript_driver = "poltergeist"
 RUBY
+end
 
 # simplecov
-insert_into_file "spec/spec_helper.rb", <<RUBY, before: "RSpec.configure do |config|"
+insert_into_file "spec/spec_helper.rb", before: "RSpec.configure do |config|\n" do
+<<RUBY
 SimpleCov.start "rails" do
   add_filter "/vendor/"
   add_filter "/spec/"
 end
 RUBY
+end
 
 # database_cleaner
 # refs. http://ruby-rails.hatenadiary.com/entry/20150204/1423055537#first-settings-test
 gsub_file "spec/rails_helper.rb", "config.use_transactional_fixtures = true", "config.use_transactional_fixtures = false"
-insert_into_file "spec/rails_helper.rb", <<RUBY, before: "RSpec.configure do |config|"
+insert_into_file "spec/rails_helper.rb", before: "RSpec.configure do |config|\n" do
+<<RUBY
 require "database_cleaner"
 RUBY
+end
 
-insert_into_file "spec/rails_helper.rb", <<RUBY, after: "RSpec.configure do |config|\n"
-  config.before :suite do
+insert_into_file "spec/rails_helper.rb", after: "RSpec.configure do |config|\n" do
+<<RUBY
+.before :suite do
     DatabaseCleaner.clean_with :truncation
   end
 
@@ -91,6 +100,7 @@ insert_into_file "spec/rails_helper.rb", <<RUBY, after: "RSpec.configure do |con
     DatabaseCleaner.clean
   end
 RUBY
+end
 
 # .pryrc(to use awesome_print, hirb)
 # refs. http://qiita.com/necojackarc/items/9cd4ce16323111021caa
