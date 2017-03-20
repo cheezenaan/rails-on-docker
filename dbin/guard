@@ -1,0 +1,11 @@
+#!/bin/bash
+set -eux
+
+readonly APP_CONTAINER="webapp"
+readonly COMMAND="`basename $0`"
+
+if docker-compose ps | grep $APP_CONTAINER | grep -q Up; then
+    docker-compose exec $APP_CONTAINER $COMMAND $@
+else
+    docker-compose run --rm $APP_CONTAINER $COMMAND $@
+fi
