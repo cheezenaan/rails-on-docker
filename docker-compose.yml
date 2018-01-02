@@ -16,8 +16,6 @@ services:
   webapp: &app_base
     container_name: rails
     build:
-      args:
-        APP_HOME: $PWD
       context: .
       dockerfile: "Dockerfile.dev"
     command: bundle exec rails s -b 0.0.0.0 --pid tmp/pids/server.pid

@@ -32,8 +32,7 @@ RUN curl -L git.io/nodebrew | perl - setup \
 RUN npm install -g phantomjs-prebuilt
 
 # Prepare for "bundle install"
-ARG APP_HOME
-WORKDIR $APP_HOME
+WORKDIR /myapp
 
 ADD Gemfile Gemfile
 ADD Gemfile.lock Gemfile.lock
